@@ -18,4 +18,6 @@ app.use('./assets/css',express.static(path.join(__dirname,'public/assets/css')))
 //Array for user notes
 let userNotes = [];
 
-
+app.listen(PORT, function(){
+    console.log('App listening:'+ PORT)
+});
