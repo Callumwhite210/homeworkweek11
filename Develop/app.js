@@ -5,7 +5,7 @@ const path = require("path")
 const app = express();
 
 //Server Port
-let PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3001;
 
 //Show that app is listening and running
 app.listen(PORT, function(){
@@ -25,11 +25,12 @@ app.use('./assets/css',express.static(path.join(__dirname,'public/assets/css')))
 let userNotes = [];
 
 //Grabs respective HTMLs
-app.get("./index",function(req,res){
+//for Heroku routing
+app.get("/",function(req,res){
     res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
-app.get("./notes",function(req,res){
+app.get("/notes",function(req,res){
     res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
