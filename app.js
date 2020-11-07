@@ -21,9 +21,6 @@ app.use(express.json());
 app.use('./assets/js',express.static(path.join(__dirname,'public/assets/js')));
 app.use('./assets/css',express.static(path.join(__dirname,'public/assets/css')));
 
-//Array for user notes
-let userNotes = [];
-
 //Grabs respective HTMLs
 //for Heroku routing
 app.get("/",function(req,res){
@@ -44,6 +41,32 @@ const noteJson = fs.readFile(path.join(__dirname, "/db/db.json"), function(err, 
         console.error(err);
     }
 });
+
+app.post("/notes", function(req, res){
+    let newnote = req.body;
+    addNote(newnote);
+    res.end();
+});
+
+//Add notes into JSON
+function addNote(newnote){
+    fs.readFile(path.join(__dirname,"./db/db.json"), function(err,note){
+        let json = JSON.parse(note);
+        json.push(newnote);
+        fs.writeFile (path.join(__dirname, "/db/db.json"), JSON.stringify(json), function(err){
+            if (err){
+              console.error(err);
+            }
+        });  
+    })
+};
+
+app.get("/api/notes", function(req, res) {
+    
+    const notesRead = fs.readFileSync(path.join(__dirname, "/db/db.json"), {encoding: "utf-8"});
+    
+    res.json(JSON.parse(notesRead));
+  });
 
 app.get("./app/notes", function(req, res){
     res.json(noteJson);
