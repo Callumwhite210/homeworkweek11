@@ -21,7 +21,6 @@ app.use(express.json());
 app.use('./assets/js',express.static(path.join(__dirname,'public/assets/js')));
 app.use('./assets/css',express.static(path.join(__dirname,'public/assets/css')));
 
-//Grabs respective HTMLs
 //for Heroku routing
 app.get("/",function(req,res){
     res.sendFile(path.join(__dirname, "./public/index.html"));
@@ -31,28 +30,18 @@ app.get("/notes",function(req,res){
     res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-//Reads and returns data in notes Json
-const noteJson = fs.readFile(path.join(__dirname, "/db/db.json"), function(err, note){
-    if (note){
-        console.log("Notes: "+ note);
-        return note;
-    }
-    if (err){
-        console.error(err);
-    }
-});
-
 app.post("/notes", function(req, res){
-    let newnote = req.body;
-    addNote(newnote);
+    let newNote = req.body;
+
+    addNote(newNote);
     res.end();
 });
 
 //Add notes into JSON
-function addNote(newnote){
+function addNote(newNote){
     fs.readFile(path.join(__dirname,"./db/db.json"), function(err,note){
         let json = JSON.parse(note);
-        json.push(newnote);
+        json.push(newNote);
         fs.writeFile (path.join(__dirname, "/db/db.json"), JSON.stringify(json), function(err){
             if (err){
               console.error(err);
@@ -61,10 +50,9 @@ function addNote(newnote){
     })
 };
 
-app.get("/api/notes", function(req, res) {
-    
-    const notesRead = fs.readFileSync(path.join(__dirname, "/db/db.json"), {encoding: "utf-8"});
-    
+
+app.get("/api/notes", function(req, res) {   
+    const notesRead = fs.readFileSync(path.join(__dirname, "/db/db.json"), {encoding: "utf-8"});   
     res.json(JSON.parse(notesRead));
   });
 
@@ -72,4 +60,6 @@ app.get("./app/notes", function(req, res){
     res.json(noteJson);
 });
 
-
+  app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/index.html"));
+  });   
